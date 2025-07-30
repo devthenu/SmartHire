@@ -16,6 +16,24 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        {{-- START: ADDED ROLE SELECTION HERE --}}
+        <div class="mt-4"> {{-- Using mt-4 to match spacing of other fields --}}
+            <x-input-label for="role" :value="__('Register as:')" />
+            {{--
+                The 'select' tag and its options.
+                The 'class' attribute is copied from x-text-input to match Breeze's default styling.
+                'old('role') == 'job_seeker' ? 'selected' : '' is added to keep selection on validation error.
+            --}}
+            <select id="role" name="role" required
+                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <option value="job_seeker" {{ old('role') == 'job_seeker' ? 'selected' : '' }}>Job Seeker</option>
+                <option value="recruiter" {{ old('role') == 'recruiter' ? 'selected' : '' }}>Recruiter</option>
+                {{-- Add other roles as <option> tags here if you want them selectable by the user --}}
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+        </div>
+        {{-- END: ADDED ROLE SELECTION HERE --}}
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
