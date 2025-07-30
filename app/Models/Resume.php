@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 // --- START: ADD THESE USE STATEMENTS ---
 use App\Models\User; // Don't forget to add this!
@@ -10,6 +11,7 @@ use App\Models\ResumeTemplate; // Don't forget to add this!
 
 class Resume extends Model
 {
+    use HasFactory;
         // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function user()

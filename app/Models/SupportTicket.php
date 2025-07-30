@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
 class SupportTicket extends Model
 {
+    use HasFactory;
     // --- START: ADD THIS RELATIONSHIP METHOD ---
 
     public function user()

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 // --- START: ADD THESE USE STATEMENTS ---
 use App\Models\User;
@@ -10,6 +12,7 @@ use App\Models\Job;
 
 class Skill extends Model
 {
+    use HasFactory;
     // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function users()

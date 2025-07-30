@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 // --- START: ADD THIS USE STATEMENT ---
 use App\Models\CourseEnrollment;
@@ -9,6 +10,7 @@ use App\Models\CourseEnrollment;
 
 class TrainingCourse extends Model
 {
+    use HasFactory;
     // --- START: ADD THIS RELATIONSHIP METHOD ---
 
     public function courseEnrollments()
