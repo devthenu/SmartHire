@@ -12,6 +12,13 @@ use App\Models\Job;
 class Application extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'job_id',
+        'status',
+    ];
+
         // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function user()

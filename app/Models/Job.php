@@ -14,6 +14,30 @@ use App\Models\Skill;
 class Job extends Model
 {
     use HasFactory;
+
+    // Add the $fillable property if you haven't already, for mass assignment
+    protected $fillable = [
+        'user_id',
+        'company_id',
+        'title',
+        'description',
+        'location',
+        'type',
+        'salary',
+        'deadline', // Make sure 'deadline' is in your fillable array
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'deadline' => 'datetime', // <-- THIS IS THE LINE YOU NEED TO ADD
+        // 'created_at' => 'datetime', // These are default, but good to have for clarity
+        // 'updated_at' => 'datetime',
+    ];
+    
         // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function user()

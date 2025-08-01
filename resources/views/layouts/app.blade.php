@@ -29,7 +29,20 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <!-- Flash Messages -->
+                @if (session('success'))
+                    <div class="alert alert-success text-white p-3 rounded bg-green-600 mb-4 max-w-7xl mx-auto mt-4">
+                        ✅ {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger text-white p-3 rounded bg-red-600 mb-4 max-w-7xl mx-auto mt-4">
+                        ❌ {{ session('error') }}
+                    </div>
+                @endif
+
+                @yield('content')
             </main>
         </div>
     </body>

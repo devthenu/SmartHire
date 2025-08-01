@@ -1,7 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Recruiter\JobController as RecruiterJobController;
+use App\Http\Controllers\JobSeeker\JobBrowseController;
+use App\Http\Controllers\JobSeeker\ApplicationController;
+use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,28 +22,44 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// --- START: ADDED ROLE-SPECIFIC DASHBOARD ROUTES ---
-
-// Admin Dashboard
+// --- ROLE-BASED DASHBOARDS ---
 Route::middleware(['auth', 'role:admin'])->get('/admin/dashboard', function () {
     return view('dashboards.admin');
-})->name('admin.dashboard'); // Added name for easier referencing
+})->name('admin.dashboard');
 
-// Recruiter Dashboard
 Route::middleware(['auth', 'role:recruiter'])->get('/recruiter/dashboard', function () {
     return view('dashboards.recruiter');
-})->name('recruiter.dashboard'); // Added name
+})->name('recruiter.dashboard');
 
-// Job Seeker Dashboard
 Route::middleware(['auth', 'role:job_seeker'])->get('/job-seeker/dashboard', function () {
     return view('dashboards.jobseeker');
-})->name('jobseeker.dashboard'); // Added name
+})->name('jobseeker.dashboard');
 
-// Support Dashboard
 Route::middleware(['auth', 'role:support'])->get('/support/dashboard', function () {
     return view('dashboards.support');
-})->name('support.dashboard'); // Added name
+})->name('support.dashboard');
 
-// --- END: ADDED ROLE-SPECIFIC DASHBOARD ROUTES ---
+// --- ROLE-SPECIFIC ROUTE GROUPS ---
 
-require __DIR__.'/auth.php';
+// 👔 Recruiter Routes
+Route::middleware(['auth', 'role:recruiter'])->prefix('recruiter')->name('recruiter.')->group(function () {
+    Route::resource('jobs', RecruiterJobController::class);
+
+    // ✅ View applications submitted to recruiter's jobs
+    Route::get('applications', [RecruiterApplicationController::class, 'index'])->name('applications.index');
+});
+
+
+// 👨‍💼 Job Seeker Routes
+Route::middleware(['auth', 'role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
+    // View jobs
+    Route::get('jobs', [JobBrowseController::class, 'index'])->name('jobs.index');
+    Route::get('jobs/{job}', [JobBrowseController::class, 'show'])->name('jobs.show');
+
+    // Apply to jobs
+    Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
+    Route::post('applications', [ApplicationController::class, 'store'])->name('applications.store');
+});
+
+
+require __DIR__ . '/auth.php';
