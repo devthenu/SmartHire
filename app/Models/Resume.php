@@ -12,6 +12,17 @@ use App\Models\ResumeTemplate; // Don't forget to add this!
 class Resume extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id', 'full_name', 'email', 'phone', 'address',
+        'summary', 'education', 'experience', 'skills',
+    ];
+
+    protected $casts = [
+        'education' => 'array',
+        'experience' => 'array',
+        'skills' => 'array',
+    ];
         // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function user()

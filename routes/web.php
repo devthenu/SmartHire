@@ -59,6 +59,10 @@ Route::middleware(['auth', 'role:job_seeker'])->prefix('job-seeker')->name('jobs
     // Apply to jobs
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
     Route::post('applications', [ApplicationController::class, 'store'])->name('applications.store');
+
+    // Resume form & save
+    Route::get('resume/create', [\App\Http\Controllers\JobSeeker\ResumeController::class, 'create'])->name('resume.create');
+    Route::post('resume', [\App\Http\Controllers\JobSeeker\ResumeController::class, 'store'])->name('resume.store');
 });
 
 
