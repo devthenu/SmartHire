@@ -1,9 +1,9 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl">Adminnn Dashboard</h2>
-    </x-slot>
+@extends('layouts.app')
 
+@section('content')
     <div class="p-6">
+        <h2 class="font-semibold text-xl mb-4">Admin Dashboard</h2>
+
         <p>Welcome, Admin! 🎉</p>
     </div>
-</x-app-layout>
+@endsection

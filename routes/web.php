@@ -6,7 +6,8 @@ use App\Http\Controllers\Recruiter\JobController as RecruiterJobController;
 use App\Http\Controllers\JobSeeker\JobBrowseController;
 use App\Http\Controllers\JobSeeker\ApplicationController;
 use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
-
+use App\Http\Controllers\JobSeeker\ResumeController;
+use App\Http\Controllers\JobSeeker\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,9 +32,9 @@ Route::middleware(['auth', 'role:recruiter'])->get('/recruiter/dashboard', funct
     return view('dashboards.recruiter');
 })->name('recruiter.dashboard');
 
-Route::middleware(['auth', 'role:job_seeker'])->get('/job-seeker/dashboard', function () {
-    return view('dashboards.jobseeker');
-})->name('jobseeker.dashboard');
+Route::get('/job-seeker/dashboard', [DashboardController::class, 'index']) // <-- THIS IS THE REPLACED ROUTE
+    ->middleware(['auth', 'role:job_seeker'])
+    ->name('jobseeker.dashboard');
 
 Route::middleware(['auth', 'role:support'])->get('/support/dashboard', function () {
     return view('dashboards.support');
@@ -63,6 +64,14 @@ Route::middleware(['auth', 'role:job_seeker'])->prefix('job-seeker')->name('jobs
     // Resume form & save
     Route::get('resume/create', [\App\Http\Controllers\JobSeeker\ResumeController::class, 'create'])->name('resume.create');
     Route::post('resume', [\App\Http\Controllers\JobSeeker\ResumeController::class, 'store'])->name('resume.store');
+    Route::get('resume/{resume}/download', [ResumeController::class, 'download'])->name('resume.download');
+    Route::get('resume/{resume}', [ResumeController::class, 'show'])->name('resume.show');
+
+    Route::resource('resume', \App\Http\Controllers\JobSeeker\ResumeController::class)->except(['show']);
+    Route::get('resume/{resume}/download', [\App\Http\Controllers\JobSeeker\ResumeController::class, 'download'])->name('resume.download');
+
+    Route::get('/job-seeker/resumes', [ResumeController::class, 'list'])->name('jobseeker.resumes.index');
+
 });
 
 

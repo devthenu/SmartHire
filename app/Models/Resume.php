@@ -14,9 +14,11 @@ class Resume extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'full_name', 'email', 'phone', 'address',
+        'user_id', 'resume_template_id', // ✅ Add this
+        'full_name', 'email', 'phone', 'address',
         'summary', 'education', 'experience', 'skills',
     ];
+
 
     protected $casts = [
         'education' => 'array',
