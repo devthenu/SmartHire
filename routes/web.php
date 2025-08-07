@@ -49,6 +49,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
 });
 
+Route::get('/admin/reports/pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPDF'])
+    ->name('admin.reports.pdf')
+    ->middleware(['auth', 'role:admin']);
+
+
 
 
 

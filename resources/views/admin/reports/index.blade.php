@@ -4,6 +4,14 @@
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-6">📊 Admin Reports</h1>
 
+    <div class="flex justify-end mb-4">
+        <a href="{{ route('admin.reports.pdf') }}"
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            🧾 Download PDF Report
+        </a>
+    </div>
+
+
     {{-- 📈 Job Creation --}}
     <div class="bg-white p-6 rounded shadow mb-8">
         <h2 class="text-xl font-semibold mb-4">Jobs Created (Last 6 Months)</h2>

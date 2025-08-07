@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Job;
 use App\Models\User;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -38,4 +39,32 @@ class ReportController extends Controller
 
 
             }
+
+
+
+    public function exportPDF()
+    {
+        $months = collect(range(0, 5))->map(fn ($i) => now()->subMonths($i)->format('Y-m'))->reverse();
+
+        $jobStats = $months->mapWithKeys(fn ($month) => [
+            $month => Job::whereYear('created_at', substr($month, 0, 4))
+                        ->whereMonth('created_at', substr($month, 5, 2))->count()
+        ]);
+
+        $userStats = $months->mapWithKeys(fn ($month) => [
+            $month => User::whereYear('created_at', substr($month, 0, 4))
+                        ->whereMonth('created_at', substr($month, 5, 2))->count()
+        ]);
+
+        $users = User::latest()->take(10)->get(); // latest 10 users
+        $jobs = Job::latest()->take(10)->get();   // latest 10 jobs
+
+        $pdf = Pdf::loadView('admin.reports.pdf', compact('months', 'jobStats', 'userStats', 'users', 'jobs'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->download('admin_report.pdf');
+    }
+
+
+        
 }
