@@ -8,6 +8,7 @@ use App\Http\Controllers\JobSeeker\ApplicationController;
 use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
 use App\Http\Controllers\JobSeeker\ResumeController;
 use App\Http\Controllers\JobSeeker\DashboardController;
+use App\Http\Controllers\Admin\AdminReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,6 +42,15 @@ Route::middleware(['auth', 'role:support'])->get('/support/dashboard', function 
 })->name('support.dashboard');
 
 // --- ROLE-SPECIFIC ROUTE GROUPS ---
+
+// routes/web.php
+// ✅ Admin Report Page
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
+});
+
+
+
 
 // 👔 Recruiter Routes
 Route::middleware(['auth', 'role:recruiter'])->prefix('recruiter')->name('recruiter.')->group(function () {
