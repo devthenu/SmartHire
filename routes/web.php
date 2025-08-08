@@ -8,7 +8,8 @@ use App\Http\Controllers\JobSeeker\ApplicationController;
 use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
 use App\Http\Controllers\JobSeeker\ResumeController;
 use App\Http\Controllers\JobSeeker\DashboardController;
-use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\JobSeeker\RecommendationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,9 +50,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
 });
 
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports/advanced', [ReportController::class, 'advanced'])->name('reports.advanced');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+});
+
+
 Route::get('/admin/reports/pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPDF'])
     ->name('admin.reports.pdf')
     ->middleware(['auth', 'role:admin']);
+
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports'); // your existing page
+    Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])->name('reports.exportCsv'); // new
+});
+use App\Http\Controllers\Admin\CourseController;
+
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('courses', CourseController::class); // index, create, store, edit, update, destroy
+});
 
 
 
@@ -67,6 +85,12 @@ Route::middleware(['auth', 'role:recruiter'])->prefix('recruiter')->name('recrui
 
 
 // 👨‍💼 Job Seeker Routes
+Route::middleware(['auth','role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
+    Route::get('recommendations', [RecommendationController::class,'index'])->name('recommendations.index');
+    Route::get('recommendations/job/{job}', [RecommendationController::class,'forJob'])->name('recommendations.forJob');
+    Route::post('courses/{course}/enroll', [RecommendationController::class,'enroll'])->name('courses.enroll');
+});
+
 Route::middleware(['auth', 'role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
     // View jobs
     Route::get('jobs', [JobBrowseController::class, 'index'])->name('jobs.index');

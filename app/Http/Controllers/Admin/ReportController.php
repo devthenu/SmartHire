@@ -8,6 +8,9 @@ use App\Models\Job;
 use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\FilteredReportExport;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
@@ -40,6 +43,53 @@ class ReportController extends Controller
 
             }
 
+    
+        // ... your existing index() here
+
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        // Optional filters
+        $role  = $request->input('role');   // admin | recruiter | job_seeker
+        $month = $request->input('month');  // YYYY-MM
+
+        $query = User::query();
+
+        if ($role) {
+            $query->whereHas('roles', fn($q) => $q->where('name', $role));
+        }
+
+        if ($month) {
+            $dt = Carbon::parse($month . '-01');
+            $query->whereYear('created_at', $dt->year)
+                  ->whereMonth('created_at', $dt->month);
+        }
+
+        $filename = 'users_report_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+
+            // CSV header
+            fputcsv($handle, ['ID', 'Name', 'Email', 'Roles', 'Created At']);
+
+            $query->with('roles')->orderBy('created_at', 'desc')->chunk(500, function ($users) use ($handle) {
+                foreach ($users as $u) {
+                    fputcsv($handle, [
+                        $u->id,
+                        $u->name,
+                        $u->email,
+                        $u->roles->pluck('name')->join('|'),
+                        optional($u->created_at)->format('Y-m-d H:i:s'),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
 
 
     public function exportPDF()
@@ -64,6 +114,28 @@ class ReportController extends Controller
 
         return $pdf->download('admin_report.pdf');
     }
+
+    public function advanced(Request $request)
+    {
+        $role = $request->input('role');
+        $month = $request->input('month');
+
+        $query = User::query();
+
+        if ($role) {
+            $query->whereHas('roles', fn($q) => $q->where('name', $role));
+        }
+
+        if ($month) {
+            $query->whereMonth('created_at', Carbon::parse($month)->format('m'))
+                ->whereYear('created_at', Carbon::parse($month)->format('Y'));
+        }
+
+        $users = $query->latest()->get();
+
+        return view('admin.reports.advanced', compact('users', 'role', 'month'));
+    }
+
 
 
         

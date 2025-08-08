@@ -11,6 +11,12 @@
         </a>
     </div>
 
+    <a href="{{ route('admin.reports.exportCsv', request()->only('role','month')) }}"
+    class="inline-block bg-green-600 text-white px-4 py-2 rounded mb-4">
+        ⬇️ Export CSV
+    </a>
+
+
 
     {{-- 📈 Job Creation --}}
     <div class="bg-white p-6 rounded shadow mb-8">
