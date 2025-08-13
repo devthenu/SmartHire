@@ -10,6 +10,11 @@ use App\Http\Controllers\JobSeeker\ResumeController;
 use App\Http\Controllers\JobSeeker\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\JobSeeker\RecommendationController;
+use App\Http\Controllers\JobSeeker\SkillController as SkillProfileController;
+use App\Http\Controllers\JobSeeker\SkillController;
+use App\Http\Controllers\Recruiter\JobSkillController;
+use App\Http\Controllers\JobSeeker\SkillGapController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -76,6 +81,10 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 
 
 // 👔 Recruiter Routes
+
+Route::get('jobs/{job}/skills', [JobSkillController::class, 'edit'])->name('jobs.skills.edit');
+Route::post('jobs/{job}/skills', [JobSkillController::class, 'update'])->name('jobs.skills.update');
+
 Route::middleware(['auth', 'role:recruiter'])->prefix('recruiter')->name('recruiter.')->group(function () {
     Route::resource('jobs', RecruiterJobController::class);
 
@@ -83,8 +92,45 @@ Route::middleware(['auth', 'role:recruiter'])->prefix('recruiter')->name('recrui
     Route::get('applications', [RecruiterApplicationController::class, 'index'])->name('applications.index');
 });
 
+// inside recruiter group...
+Route::middleware(['auth','role:recruiter'])->prefix('recruiter')->name('recruiter.')->group(function () {
+    Route::resource('jobs', \App\Http\Controllers\Recruiter\JobController::class);
+});
+
 
 // 👨‍💼 Job Seeker Routes
+
+
+
+Route::middleware(['auth','role:job_seeker'])
+    ->prefix('job-seeker')
+    ->name('jobseeker.')
+    ->group(function () {
+        Route::get('skills', [SkillController::class, 'edit'])->name('skills.edit');
+        Route::post('skills', [SkillController::class, 'update'])->name('skills.update');
+
+        Route::get('skill-gap/{job}', [SkillGapController::class, 'show'])->name('skillgap.show');
+        Route::post('courses/{course}/enroll', [SkillGapController::class, 'enroll'])->name('courses.enroll');
+    });
+
+Route::middleware(['auth','role:job_seeker'])
+    ->prefix('job-seeker')
+    ->name('jobseeker.')
+    ->group(function () {
+        Route::post('skills', [SkillProfileController::class, 'store'])->name('skills.store');
+    });
+
+Route::middleware(['auth','role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
+    Route::get('jobs/{job}/skill-gap', [\App\Http\Controllers\JobSeeker\SkillGapController::class, 'show'])->name('jobs.skill-gap');
+});
+
+
+Route::middleware(['auth','role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
+    // existing job browse & applications...
+    Route::get('skills', [\App\Http\Controllers\JobSeeker\SkillController::class, 'edit'])->name('skills.edit');
+    Route::post('skills', [\App\Http\Controllers\JobSeeker\SkillController::class, 'update'])->name('skills.update');
+});
+
 Route::middleware(['auth','role:job_seeker'])->prefix('job-seeker')->name('jobseeker.')->group(function () {
     Route::get('recommendations', [RecommendationController::class,'index'])->name('recommendations.index');
     Route::get('recommendations/job/{job}', [RecommendationController::class,'forJob'])->name('recommendations.forJob');

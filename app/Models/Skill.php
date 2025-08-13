@@ -13,6 +13,8 @@ use App\Models\Job;
 class Skill extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name','category'];
     // --- START: ADD THESE RELATIONSHIP METHODS ---
 
     public function users()

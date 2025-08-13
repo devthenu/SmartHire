@@ -35,3 +35,16 @@
         value="{{ old('deadline', isset($job->deadline) ? \Carbon\Carbon::parse($job->deadline)->format('Y-m-d') : '') }}"
         class="form-control" required>
 </div>
+
+<div class="mb-3">
+    <label class="form-label">Required Skills</label>
+    <select name="skills[]" class="form-control" multiple>
+        @foreach($skills as $skill)
+            <option value="{{ $skill->id }}"
+                @selected(collect(old('skills', isset($job) ? $job->skills->pluck('id')->all() : []))->contains($skill->id))>
+                {{ $skill->name }}
+            </option>
+        @endforeach
+    </select>
+    <small class="text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
+</div>
